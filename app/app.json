@@ -18,6 +18,7 @@
     },
     "android": {
       "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#1a1a2e"
       },
       "package": "com.aienglishtutor.app",
@@ -30,6 +31,20 @@
       "eas": {
         "projectId": "66387325-3c5b-4715-9a1d-6f137b459d7a"
       }
-    }
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "newArchEnabled": false,
+            "compileSdk": 34,
+            "targetSdk": 34,
+            "minSdk": 26,
+            "useLegacyPackaging": true
+          }
+        }
+      ]
+    ]
   }
 }
