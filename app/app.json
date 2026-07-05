@@ -41,7 +41,11 @@
             "compileSdk": 34,
             "targetSdk": 34,
             "minSdk": 26,
-            "useLegacyPackaging": true
+            "useLegacyPackaging": true,
+            "hermesEnabled": false
+          },
+          "ios": {
+            "hermesEnabled": false
           }
         }
       ]
