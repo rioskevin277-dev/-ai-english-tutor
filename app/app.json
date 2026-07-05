@@ -25,7 +25,7 @@
       "@react-native-async-storage/async-storage"
     ],
     "extra": {
-      "apiBaseUrl": "http://10.0.2.2:3001"
+      "apiBaseUrl": "https://ai-english-tutor-production-f190.up.railway.app"
     }
   }
 }
