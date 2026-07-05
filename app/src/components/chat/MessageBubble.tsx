@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import Markdown from 'react-native-markdown-display';
+import SimpleMarkdown from './SimpleMarkdown';
 import type { ChatMessage } from '../../models/types';
 
 interface MessageBubbleProps {
@@ -17,7 +17,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
           <Text style={styles.userText}>{message.text}</Text>
         ) : (
           <View>
-            <Markdown style={markdownStyles}>{message.text}</Markdown>
+            <SimpleMarkdown text={message.text} />
             {message.correction && message.correction.errors.length > 0 && (
               <View style={styles.correctionBlock}>
                 <Text style={styles.correctionsTitle}>
@@ -47,26 +47,6 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
     </View>
   );
 }
-
-const markdownStyles = {
-  body: { color: '#e0e0e0', fontSize: 15, lineHeight: 22 },
-  strong: { color: '#ff6b6b', fontWeight: '700' },
-  code_inline: {
-    backgroundColor: '#0f3460',
-    color: '#e94560',
-    paddingHorizontal: 4,
-    borderRadius: 4,
-    fontFamily: 'monospace',
-  },
-  fence: {
-    backgroundColor: '#0f3460',
-    color: '#e0e0e0',
-    padding: 8,
-    borderRadius: 8,
-    fontFamily: 'monospace',
-  },
-  paragraph: { marginVertical: 4 },
-};
 
 const styles = StyleSheet.create({
   container: {

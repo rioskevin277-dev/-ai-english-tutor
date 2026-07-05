@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 import type { ChatMessage, ProviderId } from '../models/types';
 import { PROVIDERS, DEFAULT_PROVIDER } from '../constants/config';
+import { generateId } from '../utils/id';
 import * as configService from '../services/configService';
 import * as storageService from '../services/storageService';
 
@@ -119,8 +120,7 @@ export function AppProvider({ children }: AppProviderProps) {
   }, []);
 
   const startNewSession = async () => {
-    const uuid = require('react-native-uuid');
-    const sessionId = uuid.v4();
+    const sessionId = generateId();
     dispatch({ type: 'SET_SESSION', sessionId, messages: [] });
     await storageService.saveActiveSessionId(sessionId);
     // Create empty session in storage

@@ -8,6 +8,7 @@ import MessageList from '../components/chat/MessageList';
 import InputBar from '../components/chat/InputBar';
 import { buildPrompt } from '../utils/promptBuilder';
 import { parseCorrection } from '../utils/correctionParser';
+import { generateId } from '../utils/id';
 import * as aiService from '../services/aiService';
 import { ProviderError } from '../services/aiService';
 import * as storageService from '../services/storageService';
@@ -38,11 +39,9 @@ export default function ChatScreen() {
   const handleSend = useCallback(async (text: string) => {
     if (!state.activeSessionId) return;
 
-    const uuid = require('react-native-uuid');
-
     // Create user message
     const userMessage: ChatMessage = {
-      id: uuid.v4(),
+      id: generateId(),
       role: 'user',
       text,
       timestamp: Date.now(),
@@ -77,7 +76,7 @@ export default function ChatScreen() {
 
       // Create assistant message
       const assistantMessage: ChatMessage = {
-        id: uuid.v4(),
+        id: generateId(),
         role: 'assistant',
         text: parsed.text,
         timestamp: Date.now(),
