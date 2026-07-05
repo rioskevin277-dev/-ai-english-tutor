@@ -7,6 +7,7 @@ import { useAppContext } from '../context/AppContext';
 import MessageList from '../components/chat/MessageList';
 import InputBar from '../components/chat/InputBar';
 import { buildPrompt } from '../utils/promptBuilder';
+import { parseCorrection } from '../utils/correctionParser';
 import * as aiService from '../services/aiService';
 import { ProviderError } from '../services/aiService';
 import * as storageService from '../services/storageService';
@@ -18,6 +19,7 @@ export default function ChatScreen() {
   const navigation = useNavigation<ChatNavProp>();
   const { state, dispatch, startNewSession } = useAppContext();
   const [retryMessage, setRetryMessage] = useState<string | null>(null);
+  const [showTruncatedBanner, setShowTruncatedBanner] = useState(false);
 
   // Start a new session if none active
   useEffect(() => {
@@ -25,6 +27,13 @@ export default function ChatScreen() {
       startNewSession();
     }
   }, [state.isInitialized, state.activeSessionId]);
+
+  // Auto-dismiss truncated banner after 5 seconds
+  useEffect(() => {
+    if (!showTruncatedBanner) return;
+    const timer = setTimeout(() => setShowTruncatedBanner(false), 5000);
+    return () => clearTimeout(timer);
+  }, [showTruncatedBanner]);
 
   const handleSend = useCallback(async (text: string) => {
     if (!state.activeSessionId) return;
@@ -52,7 +61,10 @@ export default function ChatScreen() {
 
     try {
       // Build prompt with context
-      const { messages: promptMessages } = buildPrompt(text, state.messages);
+      const { messages: promptMessages, truncated } = buildPrompt(text, state.messages);
+      if (truncated) {
+        setShowTruncatedBanner(true);
+      }
 
       // Send to AI
       const response = await aiService.sendMessage(
@@ -60,23 +72,37 @@ export default function ChatScreen() {
         state.activeProvider,
       );
 
+      // Parse correction from AI's structured markdown response
+      const parsed = parseCorrection(response.reply);
+
       // Create assistant message
       const assistantMessage: ChatMessage = {
         id: uuid.v4(),
         role: 'assistant',
-        text: response.reply,
+        text: parsed.text,
         timestamp: Date.now(),
         sessionId: state.activeSessionId,
+        correction: parsed.correction,
         metadata: {
           model: response.usage.provider,
           latencyMs: Date.now() - startTime,
         },
-        // The correction parsing could be enhanced;
-        // for MVP the AI returns structured markdown and we render as-is
       };
 
       dispatch({ type: 'ADD_MESSAGE', message: assistantMessage });
       await storageService.appendMessage(state.activeSessionId, assistantMessage);
+
+      // Extract new vocabulary from the AI response (words of 3+ chars)
+      const words = parsed.text
+        .toLowerCase()
+        .replace(/[^a-záéíóúñü\s-]/g, '')
+        .split(/\s+/)
+        .filter((w) => w.length >= 4 && !['the','and','for','are','but','not','you','all','can','had','her','was','one','our','out','has','have','from','they','this','that','with','your','what','will','been','said','were','when','then','them','some','than','just','also','very','well','even','about','because','which'].includes(w));
+      // Take up to 3 unique new words per response
+      const uniqueWords = [...new Set(words)].slice(0, 3);
+      for (const word of uniqueWords) {
+        await storageService.addVocabularyToSession(state.activeSessionId, word);
+      }
     } catch (err) {
       if (err instanceof ProviderError) {
         dispatch({ type: 'SET_ERROR', error: err.message });
@@ -126,6 +152,19 @@ export default function ChatScreen() {
           <Text style={styles.headerButtonText}>Settings</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Truncated context banner */}
+      {showTruncatedBanner && (
+        <TouchableOpacity
+          style={styles.truncatedBanner}
+          onPress={() => setShowTruncatedBanner(false)}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.truncatedBannerText}>
+            Older messages were discarded to keep the conversation context.
+          </Text>
+        </TouchableOpacity>
+      )}
 
       {/* Error banner */}
       {state.error && (
@@ -187,6 +226,17 @@ const styles = StyleSheet.create({
   messageCount: {
     color: '#666',
     fontSize: 11,
+  },
+  truncatedBanner: {
+    backgroundColor: '#1a2e3e',
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#2a4a5e',
+  },
+  truncatedBannerText: {
+    color: '#88ccff',
+    fontSize: 13,
+    textAlign: 'center',
   },
   errorBanner: {
     backgroundColor: '#2d1b1b',

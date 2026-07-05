@@ -5,11 +5,12 @@ import { testConnection } from '../../services/aiService';
 
 interface ConnectionTestProps {
   provider: ProviderId;
+  onStatusChange?: (provider: ProviderId, status: 'connected' | 'error') => void;
 }
 
 type TestStatus = 'idle' | 'testing' | 'success' | 'error';
 
-export default function ConnectionTest({ provider }: ConnectionTestProps) {
+export default function ConnectionTest({ provider, onStatusChange }: ConnectionTestProps) {
   const [status, setStatus] = useState<TestStatus>('idle');
   const [message, setMessage] = useState('');
 
@@ -22,13 +23,16 @@ export default function ConnectionTest({ provider }: ConnectionTestProps) {
       if (result.status === 'connected') {
         setStatus('success');
         setMessage('Connected successfully');
+        onStatusChange?.(provider, 'connected');
       } else {
         setStatus('error');
         setMessage(result.message || 'Connection failed');
+        onStatusChange?.(provider, 'error');
       }
     } catch (err: any) {
       setStatus('error');
       setMessage(err.message || 'Network error');
+      onStatusChange?.(provider, 'error');
     }
   };
 

@@ -38,6 +38,7 @@ export interface ChatSession {
   updatedAt: number;
   messageCount: number;
   errorCount: number;
+  vocabularyLearned: string[];
   messages: ChatMessage[];
   summary?: string;
 }

@@ -131,6 +131,7 @@ export function AppProvider({ children }: AppProviderProps) {
       updatedAt: Date.now(),
       messageCount: 0,
       errorCount: 0,
+      vocabularyLearned: [],
       messages: [],
     });
   };

@@ -42,6 +42,11 @@ export default function SessionCard({ session, onPress, onDelete }: SessionCardP
                 {session.errorCount} errors
               </Text>
             )}
+            {session.vocabularyLearned && session.vocabularyLearned.length > 0 && (
+              <Text style={styles.vocabStat}>
+                {session.vocabularyLearned.length} new words
+              </Text>
+            )}
           </View>
         </View>
       </View>
@@ -98,6 +103,10 @@ const styles = StyleSheet.create({
   },
   errorStat: {
     color: '#e94560',
+    fontSize: 11,
+  },
+  vocabStat: {
+    color: '#ffa500',
     fontSize: 11,
   },
   deleteButton: {

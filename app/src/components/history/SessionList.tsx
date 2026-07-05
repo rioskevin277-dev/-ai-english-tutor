@@ -5,6 +5,7 @@ import SessionCard from './SessionCard';
 
 interface SessionListProps {
   sessions: ChatSession[];
+  hasActiveSearch?: boolean;
   onSessionPress: (session: ChatSession) => void;
   onSessionDelete: (sessionId: string) => void;
   onRefresh: () => void;
@@ -13,6 +14,7 @@ interface SessionListProps {
 
 export default function SessionList({
   sessions,
+  hasActiveSearch = false,
   onSessionPress,
   onSessionDelete,
   onRefresh,
@@ -21,9 +23,19 @@ export default function SessionList({
   if (sessions.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyIcon}>📝</Text>
-        <Text style={styles.emptyTitle}>No sessions yet</Text>
-        <Text style={styles.emptySubtitle}>Start a chat and your sessions will appear here.</Text>
+        {hasActiveSearch ? (
+          <>
+            <Text style={styles.emptyIcon}>🔍</Text>
+            <Text style={styles.emptyTitle}>No sessions match your search</Text>
+            <Text style={styles.emptySubtitle}>Try a different search term.</Text>
+          </>
+        ) : (
+          <>
+            <Text style={styles.emptyIcon}>📝</Text>
+            <Text style={styles.emptyTitle}>No sessions yet</Text>
+            <Text style={styles.emptySubtitle}>Start a chat and your sessions will appear here.</Text>
+          </>
+        )}
       </View>
     );
   }

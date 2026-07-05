@@ -1,15 +1,24 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import type { AIProviderConfig, ProviderId } from '../../models/types';
+import type { ProviderStatusValue } from '../../services/configService';
 import ConnectionTest from './ConnectionTest';
 
 interface ProviderCardProps {
   provider: AIProviderConfig;
   isActive: boolean;
+  status: ProviderStatusValue;
   onSelect: (providerId: ProviderId) => void;
+  onStatusChange: (provider: ProviderId, status: 'connected' | 'error') => void;
 }
 
-export default function ProviderCard({ provider, isActive, onSelect }: ProviderCardProps) {
+const STATUS_COLORS: Record<ProviderStatusValue, string> = {
+  connected: '#6bcb77',
+  error: '#e94560',
+  untested: '#555',
+};
+
+export default function ProviderCard({ provider, isActive, status, onSelect, onStatusChange }: ProviderCardProps) {
   return (
     <TouchableOpacity
       style={[styles.card, isActive && styles.cardActive]}
@@ -18,6 +27,8 @@ export default function ProviderCard({ provider, isActive, onSelect }: ProviderC
     >
       <View style={styles.header}>
         <View style={styles.titleRow}>
+          {/* Status indicator dot */}
+          <View style={[styles.statusDot, { backgroundColor: STATUS_COLORS[status] }]} />
           <Text style={styles.name}>{provider.name}</Text>
           {isActive && (
             <View style={styles.activeBadge}>
@@ -40,7 +51,7 @@ export default function ProviderCard({ provider, isActive, onSelect }: ProviderC
         <Text style={styles.detailValue}>{provider.models.length}</Text>
       </View>
 
-      {isActive && <ConnectionTest provider={provider.id} />}
+      <ConnectionTest provider={provider.id} onStatusChange={onStatusChange} />
     </TouchableOpacity>
   );
 }
@@ -74,6 +85,11 @@ const styles = StyleSheet.create({
     color: '#e0e0e0',
     fontSize: 18,
     fontWeight: '700',
+  },
+  statusDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
   },
   activeBadge: {
     backgroundColor: '#6bcb77',

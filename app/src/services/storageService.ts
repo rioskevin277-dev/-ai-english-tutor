@@ -96,6 +96,32 @@ export async function loadActiveSessionId(): Promise<string | null> {
 }
 
 // ──────────────────────────────────────────────
+// Vocabulary
+// ──────────────────────────────────────────────
+
+/**
+ * Add a new word to a session's vocabularyLearned list (deduplicated).
+ */
+export async function addVocabularyToSession(sessionId: string, word: string): Promise<void> {
+  const session = await getSession(sessionId);
+  if (!session) return;
+
+  const trimmed = word.trim().toLowerCase();
+  if (!trimmed) return;
+
+  // Initialize vocabularyLearned for sessions saved before this field existed
+  if (!session.vocabularyLearned) {
+    session.vocabularyLearned = [];
+  }
+
+  if (!session.vocabularyLearned.includes(trimmed)) {
+    session.vocabularyLearned.push(trimmed);
+    session.updatedAt = Date.now();
+    await saveSession(session);
+  }
+}
+
+// ──────────────────────────────────────────────
 // Message Helpers
 // ──────────────────────────────────────────────
 

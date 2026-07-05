@@ -1,18 +1,37 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { useAppContext } from '../context/AppContext';
 import { PROVIDERS } from '../constants/config';
 import ProviderCard from '../components/settings/ProviderCard';
 import type { ProviderId } from '../models/types';
+import type { ProviderStatusMap } from '../services/configService';
+import { loadProviderStatus, saveProviderStatus } from '../services/configService';
 
 export default function SettingsScreen() {
   const { state, switchProvider } = useAppContext();
+  const [providerStatus, setProviderStatus] = useState<ProviderStatusMap>({
+    groq: 'untested',
+    openai: 'untested',
+    anthropic: 'untested',
+  });
+
+  useEffect(() => {
+    loadProviderStatus().then(setProviderStatus);
+  }, []);
 
   const handleProviderSelect = useCallback(
     async (providerId: ProviderId) => {
       await switchProvider(providerId);
     },
     [switchProvider],
+  );
+
+  const handleStatusChange = useCallback(
+    (provider: ProviderId, status: 'connected' | 'error') => {
+      setProviderStatus((prev) => ({ ...prev, [provider]: status }));
+      saveProviderStatus(provider, status);
+    },
+    [],
   );
 
   return (
@@ -29,7 +48,9 @@ export default function SettingsScreen() {
           key={provider.id}
           provider={provider}
           isActive={state.activeProvider === provider.id}
+          status={providerStatus[provider.id]}
           onSelect={handleProviderSelect}
+          onStatusChange={handleStatusChange}
         />
       ))}
 
