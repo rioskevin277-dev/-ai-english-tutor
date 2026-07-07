@@ -10,16 +10,23 @@
     "build:android": "eas build -p android --profile preview"
   },
   "dependencies": {
-    "babel-preset-expo": "~57.0.0",
-    "expo": "^57.0.2",
-    "expo-build-properties": "~57.0.3",
-    "react": "18.2.0",
-    "react-native": "0.86.0"
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-navigation/native": "^7.3.7",
+    "@react-navigation/native-stack": "^7.17.9",
+    "babel-preset-expo": "~56.0.0",
+    "expo": "~56.0.0",
+    "expo-build-properties": "~56.0.21",
+    "expo-constants": "~56.0.20",
+    "expo-status-bar": "~56.0.4",
+    "react": "19.2.3",
+    "react-native": "0.85.3",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "4.25.2"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
     "@types/react": "^19.1.1",
-    "typescript": "~5.3.3"
+    "typescript": "~6.0.3"
   },
   "private": true
 }

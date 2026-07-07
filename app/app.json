@@ -48,7 +48,8 @@
             "hermesEnabled": false
           }
         }
-      ]
+      ],
+      "expo-status-bar"
     ]
   }
 }
