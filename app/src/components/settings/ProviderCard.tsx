@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Linking, StyleSheet } from 'react-native';
 import type { AIProviderConfig, ProviderId } from '../../models/types';
 import type { ProviderStatusValue } from '../../services/configService';
 import ConnectionTest from './ConnectionTest';
@@ -51,6 +51,15 @@ export default function ProviderCard({ provider, isActive, status, onSelect, onS
         <Text style={styles.detailValue}>{provider.models.length}</Text>
       </View>
 
+      {provider.signupUrl && (
+        <TouchableOpacity
+          style={styles.signupLink}
+          onPress={() => Linking.openURL(provider.signupUrl!)}
+          activeOpacity={0.6}
+        >
+          <Text style={styles.signupLinkText}>🔑 Get API Key →</Text>
+        </TouchableOpacity>
+      )}
       <ConnectionTest provider={provider.id} onStatusChange={onStatusChange} />
     </TouchableOpacity>
   );
@@ -127,5 +136,20 @@ const styles = StyleSheet.create({
   detailValue: {
     color: '#b0b0b0',
     fontSize: 13,
+  },
+  signupLink: {
+    marginTop: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#0f3460',
+    borderRadius: 8,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#e94560',
+  },
+  signupLinkText: {
+    color: '#e94560',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });

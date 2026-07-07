@@ -35,6 +35,7 @@ export const PROVIDERS: AIProviderConfig[] = [
     models: ['gpt-4o-mini', 'gpt-4o', 'gpt-3.5-turbo'],
     isFree: false,
     requiresKey: true,
+    signupUrl: 'https://platform.openai.com/api-keys',
   },
   {
     id: 'anthropic',
@@ -43,6 +44,7 @@ export const PROVIDERS: AIProviderConfig[] = [
     models: ['claude-3-haiku-20240307', 'claude-3-sonnet-20240229'],
     isFree: false,
     requiresKey: true,
+    signupUrl: 'https://console.anthropic.com/settings/keys',
   },
 ];
 

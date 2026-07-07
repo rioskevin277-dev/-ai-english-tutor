@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MAX_INPUT_LENGTH } from '../../constants/config';
 import { isValidInput } from '../../utils/promptBuilder';
 
@@ -9,6 +10,7 @@ interface InputBarProps {
 }
 
 export default function InputBar({ onSend, disabled }: InputBarProps) {
+  const insets = useSafeAreaInsets();
   const [text, setText] = useState('');
 
   const handleSend = () => {
@@ -22,7 +24,7 @@ export default function InputBar({ onSend, disabled }: InputBarProps) {
   const remaining = MAX_INPUT_LENGTH - text.length;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 16) }]}>
       <View style={styles.inputRow}>
         <TextInput
           style={styles.input}
@@ -61,7 +63,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1a1a2e',
     paddingHorizontal: 12,
     paddingVertical: 8,
-    paddingBottom: 24,
+    paddingBottom: 12,
   },
   inputRow: {
     flexDirection: 'row',

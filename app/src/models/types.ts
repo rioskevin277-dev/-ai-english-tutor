@@ -56,6 +56,7 @@ export interface AIProviderConfig {
   models: string[];
   isFree: boolean;
   requiresKey: boolean;
+  signupUrl?: string;
 }
 
 // ──────────────────────────────────────────────
